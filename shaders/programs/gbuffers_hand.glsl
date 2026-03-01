@@ -93,6 +93,8 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 #include "/lib/util/ToShadow.glsl"
 #include "/lib/color/lightColor.glsl"
 
+#include "/lib/wildWest/fragment/define.glsl"
+
 #if defined VX_SUPPORT || defined DYNAMIC_HANDLIGHT
 #include "/lib/vx/blocklightColor.glsl"
 #endif
@@ -120,7 +122,10 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 
 // Main //
 void main() {
-    vec4 albedo = texture2D(tex, texCoord) * color;
+
+    #include "/lib/wildWest/fragment/draw.glsl"
+
+    vec4 albedo = color;
     vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
     vec3 newNormal = normal;
     vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z + 0.38);
@@ -159,11 +164,13 @@ void main() {
 
 
 #ifdef VSH
-
+uniform sampler2D tex;
 // VSH Data //
 out vec4 color;
 out vec3 normal;
 out vec2 texCoord, lmCoord;
+
+#include "/lib/wildWest/vertex/define.glsl"
 
 // Main //
 void main() {
@@ -177,6 +184,8 @@ void main() {
     normal = normalize(gl_NormalMatrix * gl_Normal);
 
 	gl_Position = ftransform();
+
+    #include "/lib/wildWest/vertex/draw.glsl"
 }
 
 #endif
