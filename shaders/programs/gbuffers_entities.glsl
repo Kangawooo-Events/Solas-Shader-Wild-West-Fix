@@ -131,6 +131,7 @@ void main() {
 	albedo.rgb = fmix(albedo.rgb, entityColor.rgb * entityColor.rgb * 2.0, entityColor.a);
 
 	float lightningBolt = float(mat == 1);
+	float spectralArrow = float(mat == 110);
 	float subsurface = 0.0;
 	float emission = 0.0, smoothness = 0.0, metalness = 0.0, porosity = 0.5, parallaxShadow = 0.0;
 
@@ -156,6 +157,17 @@ void main() {
 		#endif
 
 		vec3 shadow = vec3(0.0);
+		gbuffersLighting(color, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, smoothness, parallaxShadow);
+	}
+
+	if (spectralArrow > 0.5) {
+
+		vec2 lightmap = vec2(5.0);
+		vec3 shadow = vec3(255.0);
+		float emission = 10.0;
+
+		generateIPBR(albedo, worldPos, viewPos, lightmap, emission, smoothness, metalness, subsurface);
+
 		gbuffersLighting(color, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, smoothness, parallaxShadow);
 	}
 
