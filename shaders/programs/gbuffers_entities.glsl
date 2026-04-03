@@ -123,11 +123,26 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 #include "/lib/pbr/generatedPBR.glsl"
 #endif
 
+const vec3 WARNING_DETECTION_COLOR = vec3(205.0, 12.0, 51.0);
+const vec3 MAX_COLOR = vec3(255.0, 255.0, 255.0);
+
+bool colorAreTheSame(vec3 realColor, vec3 colorIn255)
+{
+    vec3 color = colorIn255/MAX_COLOR;
+    return (abs(realColor.r - color.r) < 0.01 && abs(realColor.g - color.g) < 0.01 && abs(realColor.b - color.b) < 0.01);
+}
+
 // Main //
 void main() {
 	vec4 albedo = texture2D(tex, texCoord);
 	if (albedo.a < 0.00001) discard;
 	albedo *= color;
+
+	if(colorAreTheSame(color.rgb,WARNING_DETECTION_COLOR ))
+    {
+        discard;
+    }
+
 	albedo.rgb = fmix(albedo.rgb, entityColor.rgb * entityColor.rgb * 2.0, entityColor.a);
 
 	float lightningBolt = float(mat == 1);
