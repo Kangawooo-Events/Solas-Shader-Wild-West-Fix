@@ -118,9 +118,23 @@ void main() {
 
 	vec4 albedo = albedoTexture * color;
 		 albedo.a *= albedo.a;
-	if (color.rgb == vec3(1.0)) {
-        discard;
-    }
+
+	float textureDelta = max(
+    abs(albedoTexture.r - albedoTexture.g),
+    max(
+        abs(albedoTexture.g - albedoTexture.b),
+        abs(albedoTexture.r - albedoTexture.b)
+    )
+);
+
+bool isTintableParticle =
+    color.rgb == vec3(1.0) &&
+    textureDelta < 0.01;
+
+if (isTintableParticle) {
+    discard;
+}
+
 	if (albedo.r < 0.29 && albedo.g < 0.44 && albedo.b > 0.75) discard;
 
     vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
